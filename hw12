@@ -1,0 +1,80 @@
+import math
+import numpy as np
+
+np.set_printoptions(precision=4, suppress=True)
+
+# ---------------------------------------------------------
+# 1. Cross Entropy 與 Entropy
+# ---------------------------------------------------------
+def log2(x):
+    return math.log(max(x, 1e-15), 2)
+
+def cross_entropy(p, q):
+    return sum(p[i] * log2(1 / q[i]) for i in range(len(p)))
+
+def entropy(p):
+    return cross_entropy(p, p)
+
+# ---------------------------------------------------------
+# 2. Softmax（確保 q 在 simplex 上）
+# ---------------------------------------------------------
+def softmax(z):
+    z = z - np.max(z)              # 數值穩定
+    exp_z = np.exp(z)
+    return exp_z / np.sum(exp_z)
+
+# ---------------------------------------------------------
+# 3. Gradient Descent on z
+# ---------------------------------------------------------
+def gradient_descent_softmax(p, z_init, lr=0.1, steps=10000):
+    
+    z = z_init.copy()
+    
+    for i in range(steps):
+        q = softmax(z)
+        
+        # gradient of cross entropy wrt z
+        # ∂H/∂z_j = q_j - p_j
+        grad = q - p
+        
+        # gradient descent update
+        z -= lr * grad
+        
+        if i % 1000 == 0:
+            loss = cross_entropy(p, q)
+            print(f"{i:05d}: Loss={loss:.6f}, q={q}")
+    
+    return softmax(z)
+
+# ---------------------------------------------------------
+# 4. 主程式驗證
+# ---------------------------------------------------------
+if __name__ == "__main__":
+    
+    # 固定目標分佈 p
+    p = np.array([1/2, 1/4, 1/4])
+    
+    # 任意初始 z（不需滿足任何限制）
+    z_start = np.zeros(len(p))
+    
+    print(f"Target p           : {p}")
+    print(f"Target entropy(p)  : {entropy(p):.6f}\n")
+    
+    q_final = gradient_descent_softmax(
+        p,
+        z_start,
+        lr=0.2,
+        steps=15000
+    )
+    
+    print("-" * 60)
+    print("Final Result:")
+    print(f"Optimized q : {q_final}")
+    print(f"Target p    : {p}")
+    print(f"Final Loss  : {cross_entropy(p, q_final):.6f}")
+    
+    error = np.sum(np.abs(q_final - p))
+    if error < 1e-3:
+        print("\n✅ 驗證成功：Gradient Descent + Softmax 收斂至 q = p")
+    else:
+        print("\n⚠️ 尚未完全收斂")
