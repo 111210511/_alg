@@ -1,0 +1,10 @@
+methods = {
+    "Hill Climbing": hill_climbing_down(0, 0),
+    "Greedy": greedy_search(0, 0),
+    "Gradient Descent": gradient_descent(0, 0),
+    "SGD": stochastic_gradient_descent(0, 0),
+    "Simulated Annealing": simulated_annealing(0, 0)
+}
+
+for name, (m, b) in methods.items():
+    print(f"{name:20s} m={m:.3f}, b={b:.3f}, MSE={MSE(m,b):.4f}")
