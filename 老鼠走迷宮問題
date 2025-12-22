@@ -1,0 +1,59 @@
+from copy import deepcopy
+
+# 迷宮地圖
+maze = [
+    "********",
+    "** * ***",
+    "     ***",
+    "* ******",
+    "*     **",
+    "***** **"
+]
+
+# 起點
+start = (2, 0)
+# 出口條件：到最右列或最底列
+rows, cols = len(maze), len(maze[0])
+
+# 方向向量：右、下、左、上
+directions = [(0,1), (1,0), (0,-1), (-1,0)]
+
+# 用於儲存最短路徑
+shortest_path = None
+
+def dfs(x, y, path, visited):
+    global shortest_path
+
+    # 出口條件
+    if x == rows-1 or y == cols-1:
+        path.append((x, y))
+        if shortest_path is None or len(path) < len(shortest_path):
+            shortest_path = deepcopy(path)
+        path.pop()
+        return
+
+    visited.add((x, y))
+    path.append((x, y))
+
+    for dx, dy in directions:
+        nx, ny = x+dx, y+dy
+        if 0 <= nx < rows and 0 <= ny < cols:
+            if maze[nx][ny] == ' ' and (nx, ny) not in visited:
+                dfs(nx, ny, path, visited)
+
+    path.pop()
+    visited.remove((x, y))
+
+# 執行 DFS
+dfs(start[0], start[1], [], set())
+
+# 輸出結果
+if shortest_path:
+    maze_result = [list(row) for row in maze]
+    for x, y in shortest_path:
+        maze_result[x][y] = '.'
+    print("迷宮最短路徑 (長度={}):".format(len(shortest_path)))
+    for row in maze_result:
+        print(''.join(row))
+else:
+    print("無法走出迷宮")
