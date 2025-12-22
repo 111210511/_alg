@@ -1,0 +1,67 @@
+import random
+
+# --------------------------------------------------
+# 遞迴產生一個 n 維隨機點
+# --------------------------------------------------
+def generate_point(bounds, dim=0, point=None):
+    """
+    bounds: [(a1,b1), (a2,b2), ..., (an,bn)]
+    """
+    if point is None:
+        point = []
+
+    if dim == len(bounds):
+        return point
+
+    a, b = bounds[dim]
+    x = random.uniform(a, b)
+    point.append(x)
+
+    return generate_point(bounds, dim + 1, point)
+
+
+# --------------------------------------------------
+# n 維蒙地卡羅積分
+# --------------------------------------------------
+def monte_carlo_integral(f, bounds, samples):
+    """
+    f       : n 維函數，輸入為 list
+    bounds  : 每一維的積分範圍
+    samples : 抽樣點數
+    """
+    # 計算 n 維體積
+    volume = 1.0
+    for a, b in bounds:
+        volume *= (b - a)
+
+    total = 0.0
+    for _ in range(samples):
+        x = generate_point(bounds)
+        total += f(x)
+
+    return volume * total / samples
+
+
+# --------------------------------------------------
+# 範例：n 維函數定義
+# f(x1, x2, ..., xn) = x1^2 + x2^2 + ... + xn^2
+# --------------------------------------------------
+def example_function(x):
+    return sum(v * v for v in x)
+
+
+# --------------------------------------------------
+# 主程式
+# --------------------------------------------------
+if __name__ == "__main__":
+    n = 4                     # 維度 n（可自由改）
+    bounds = [(0, 1)] * n     # 每一維範圍 [0,1]
+    samples = 200000          # 抽樣點數
+
+    result = monte_carlo_integral(
+        example_function,
+        bounds,
+        samples
+    )
+
+    print(f"{n} 維蒙地卡羅積分結果 =", result)
