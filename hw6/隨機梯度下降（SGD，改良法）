@@ -1,0 +1,7 @@
+def stochastic_gradient_descent(m, b, lr=0.01, epochs=100):
+    for _ in range(epochs):
+        for i in range(len(x)):
+            error = (m * x[i] + b) - y[i]
+            m -= lr * 2 * error * x[i]
+            b -= lr * 2 * error
+    return m, b
