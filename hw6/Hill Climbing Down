@@ -1,0 +1,15 @@
+def hill_climbing_down(m, b, h=0.01, max_iter=1000):
+    for _ in range(max_iter):
+        cur = MSE(m, b)
+
+        if MSE(m + h, b) < cur:
+            m += h
+        elif MSE(m - h, b) < cur:
+            m -= h
+        elif MSE(m, b + h) < cur:
+            b += h
+        elif MSE(m, b - h) < cur:
+            b -= h
+        else:
+            break
+    return m, b
