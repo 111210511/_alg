@@ -1,0 +1,67 @@
+import time
+
+# --- 方法 1：直接使用 Python 內建運算符 ---
+def power2n_method1(n):
+    return 2**n
+
+# --- 方法 2a：遞迴 (相加邏輯) ---
+# 邏輯：2^n = 2^(n-1) + 2^(n-1)
+# 缺點：沒有查表時，計算量會指數爆炸，速度非常慢
+def power2n_method2a(n):
+    if n == 0:
+        return 1
+    return power2n_method2a(n-1) + power2n_method2a(n-1)
+
+# --- 方法 2b：遞迴 (相乘邏輯) ---
+# 邏輯：2^n = 2 * 2^(n-1)
+# 優點：比 2a 快，因為每次只呼叫一次函式
+def power2n_method2b(n):
+    if n == 0:
+        return 1
+    return 2 * power2n_method2b(n-1)
+
+# --- 方法 3：遞迴 + 查表 (Memoization) ---
+# 這是你最想要的部分！加入 cache 來記憶算過的結果
+lookup_table = {}
+
+def power2n_method3(n):
+    # 步驟 1: 先查表，如果有算過，直接回傳
+    if n in lookup_table:
+        return lookup_table[n]
+    
+    # 步驟 2: 處理終止條件
+    if n == 0:
+        result = 1
+    else:
+        # 步驟 3: 沒算過則進行計算 (使用相加邏輯)
+        result = power2n_method3(n-1) + power2n_method3(n-1)
+    
+    # 步驟 4: 將結果存入表 (Cache)
+    lookup_table[n] = result
+    return result
+
+# --- 測試與執行區 ---
+if __name__ == '__main__':
+    n = 30  # 測試數字，建議不要對 方法2a 設定太大(>30)，否則會跑很久
+    
+    print(f"計算 2 的 {n} 次方：")
+
+    # 測試方法 1
+    start = time.time()
+    print(f"方法 1 (內建): {power2n_method1(n)}")
+    print(f"耗時: {time.time() - start:.6f} 秒\n")
+
+    # 測試方法 2a
+    start = time.time()
+    print(f"方法 2a (遞迴相加-無查表): {power2n_method2a(n)}")
+    print(f"耗時: {time.time() - start:.6f} 秒 (這會最慢)\n")
+
+    # 測試方法 2b
+    start = time.time()
+    print(f"方法 2b (遞迴相乘): {power2n_method2b(n)}")
+    print(f"耗時: {time.time() - start:.6f} 秒\n")
+
+    # 測試方法 3
+    start = time.time()
+    print(f"方法 3 (遞迴相加+查表): {power2n_method3(n)}")
+    print(f"耗時: {time.time() - start:.6f} 秒 (變很快！)\n")
