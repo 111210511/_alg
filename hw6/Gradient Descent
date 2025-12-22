@@ -1,0 +1,10 @@
+def gradient_descent(m, b, lr=0.01, epochs=1000):
+    n = len(x)
+    for _ in range(epochs):
+        y_pred = predict(m, b, x)
+        dm = (2 / n) * np.sum((y_pred - y) * x)
+        db = (2 / n) * np.sum(y_pred - y)
+
+        m -= lr * dm
+        b -= lr * db
+    return m, b
