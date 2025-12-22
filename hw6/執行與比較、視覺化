@@ -8,3 +8,9 @@ methods = {
 
 for name, (m, b) in methods.items():
     print(f"{name:20s} m={m:.3f}, b={b:.3f}, MSE={MSE(m,b):.4f}")
+
+m, b = methods["Gradient Descent"]
+plt.scatter(x, y, color='red')
+plt.plot(x, predict(m, b, x))
+plt.title("Linear Regression Result")
+plt.show()
