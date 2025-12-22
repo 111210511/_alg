@@ -1,0 +1,14 @@
+def greedy_search(m, b, h=0.01, max_iter=1000):
+    for _ in range(max_iter):
+        candidates = [
+            (m + h, b), (m - h, b),
+            (m, b + h), (m, b - h)
+        ]
+
+        best = min(candidates, key=lambda p: MSE(p[0], p[1]))
+
+        if MSE(best[0], best[1]) < MSE(m, b):
+            m, b = best
+        else:
+            break
+    return m, b
